@@ -34,3 +34,5 @@ var TodoView=Backbone.View.extend({
 var todoView=new TodoView({
 	model:myTodo
 })
+conosle.log(;'testtt');
+console.log('test22222')
