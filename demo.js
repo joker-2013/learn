@@ -103,3 +103,4 @@ todoCollection2.reset();
 todoCollection.forEach(function(model){
 	console.log(model.get('title'))
 })
+console.log('testtt')
