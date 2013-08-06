@@ -103,4 +103,26 @@ todoCollection2.reset();
 todoCollection.forEach(function(model){
 	console.log(model.get('title'))
 })
-console.log('testtt')
+var todo4=new Backbone.Model();
+var todos4=new Backbone.Collection([todo4]);
+todos4.on('reset',function(todos,options){
+	console.log(todos);
+	console.log(options.previousModels);
+	console.log(options.previousModels[0]==todo4)
+});
+console.log('foreach,sortBy,map,amx,min,pluck,filter:');
+var todos5=new Backbone.Collection();
+todos5.add([
+	{title:'t2'},
+	{title:'t1'},
+	{title:'t3'}
+]);
+console.log('indexOf:');
+var peoples=new Backbone.Collection();
+var tom=new Backbone.Model({name:'tom'});
+var rob=new Backbone.Model({name:'rob'});
+var tim=new Backbone.Model({name:'tim'});
+peoples.add([tom,rob,tim]);
+console.log('text')
+
+
