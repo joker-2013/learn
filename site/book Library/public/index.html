@@ -8,7 +8,7 @@
 			<ul>
 				<li><%= title %></li>
 				<li><%= author %></li>
-				<li><%= releaseDate %></li>
+				<li><%= $.format.date(new Date(releaseDate),'MMMM yyyy') %></li>
 				<li><%= keywords %></li>
 			</ul>
 			<button class="delete">Delete</button>
@@ -19,6 +19,7 @@
 		<script type="text/javascript" src="js/lib/jquery.js"></script>
 		<script type="text/javascript" src="js/lib/underscore.js"></script>
 		<script type="text/javascript" src="js/lib/backbone.js"></script>
+		<script type="text/javascript" src="js/lib/jquery.dateFormat-1.0.js"></script>
 		<script type="text/javascript" src="js/models/book.js"></script>
 		<script type="text/javascript" src="js/collections/library.js"></script>
 		<script type="text/javascript" src="js/views/book.js"></script>
@@ -45,7 +46,7 @@
 		</div>
 		<script type="text/javascript">
 			//console.log(_.template($('#bookTemplate').html()))
-			$('#testDiv').html(_.template($('#bookTemplate').html())({coverImage:'img/test.jpg',title:'test title',author:'test author',releaseDate:'2000.10.19',keywords:'test keywords'}));
+			$('#testDiv').html(_.template($('#bookTemplate').html())({coverImage:'img/placeholder.jpg',title:'test title',author:'test author',releaseDate:'2000.10.19',keywords:'test keywords'}));
 		</script>
 	</body>
 </html>
