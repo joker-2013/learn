@@ -1,0 +1,1590 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>纽约时装周</title>
+<link href="css/ny.css" rel="stylesheet" type="text/css"/>
+<link href="css/alsStyle.css" rel="stylesheet" type="text/css"/>
+<script src="js/jquery-1.7.2.min.js" type="text/javascript"></script>
+<script src="js/jquery.template.js" type="text/javascript"></script>
+<script src="js/tools.min.js" type="text/javascript"></script>
+<script src="js/jquery.alsEN-1.1.js" type="text/javascript"></script>
+<script type="text/javascript">
+    $(function () {
+        function loadYouKuFlash(vid){
+
+        }
+        //load flash
+        $("#my-als-list-10 ul li a").on("click",function(){
+             var vid=$(this).data("vid");
+            loadYouKuFlash(vid);
+        });
+        //load flash
+        $("#imgshow").scrollable({circular: true, prev: "#imgshow_l", next: "#imgshow_r"}).autoscroll({autoplay: true, interval: 5000}).navigator({navi: "#scro_nav"});
+        $("#makeupScroll").scrollable({circular: true, prev: "#makeupScrollPre", next: "#makeupScrollNext"});
+        // $("#onlineReportScroll").scrollable({circular: true, prev: "#onlineReportScrollPre", next: "#onlineReportScrollNext"});
+
+        $(".topnav li").hover(function(){$(this).addClass("on")},function(){$(this).removeClass("on")});
+        $(".topnav li a.newyork").click(function(){
+            $(".top_header").animate({
+                "height":0
+            });
+            $(".header").animate({
+                "top":0
+            });
+        })
+
+        $("#my-als-list-1").als({
+            visible_items: 5,
+            scrolling_items: 1,
+            orientation: "horizontal",
+            circular: "yes",
+//                autoscroll: "yes",
+//                interval: 2000,
+//                direction: "left",
+            start_from: 0
+        });
+//            $("#my-als-list-2").als({
+//                visible_items: 14,
+//                scrolling_items: 1,
+//                orientation: "vertical",
+//                circular: "no",
+//                start_from: 0
+//            });
+        $("#tabPanels-1 .als-container").each(function (index, ele) {
+            var $that = $(this);
+            if ($that.find('li').length < 15) {
+                $that.find('.als-prev').css({
+                    "display": "none"
+                });
+                $that.find('.als-next').css({
+                    "display": "none"
+                })
+                return;
+            }
+            $that.als({
+                visible_items: 14,
+                scrolling_items: 1,
+                orientation: "vertical",
+                circular: "no",
+                start_from: 0
+            });
+        });
+        $("#my-als-list-10").als({
+            visible_items: 5,
+            scrolling_items: 1,
+            orientation: "horizontal",
+            circular: "yes",
+            start_from: 0
+        });
+        // $("#onlineReportScroll").als({
+        //     visible_items: 3,
+        //     scrolling_items: 3,
+        //     orientation: "horizontal",
+        //     circular: "no",
+        //     start_from: 0
+        // });
+        $('#tabs-1').tabs("#tabPanels-1 > div")
+        $(".view_list_con li").hover(function () {
+            $(this).addClass("on")
+        }, function () {
+            $(this).removeClass("on")
+        })
+        $(window).on('scroll', function (e) {
+            if(parseInt($(".top_header").css("height"))===0){
+                $('.header').css({
+                    "position": "fixed",
+                    "top":"0px"
+                });
+                return;
+            }
+            if ($(document).scrollTop() >= 638) {
+                $('.header').css({
+                    "position": "fixed",
+                    "top": "0px"
+                })
+            } else {
+                $('.header').css({
+                    "position": "absolute",
+                    "top": "638px"
+                })
+            }
+        })
+
+
+        /////////////////////
+        function appendToLi(){}
+        setTimeout(function(){
+            $.ajax({
+            url: "/fashionWeekList"
+        }).done(function(data){
+            var i=0,listLen=data.num,itemHtml='',$item,loadedItemNum=0;            
+            for(;i<listLen;i++){
+                itemHtml=template("fashionListTemplate",data.list[i]);
+                // console.log(itemHtml);
+                $item=$(itemHtml).css({
+                    'display':'none'
+                });
+                //TODO  先把全部的html插入到页面中。然后再来重新布局
+                $item.appendTo('#onlineReportScroll ul li:first-child');
+                // console.log('height:',$item.height());
+                // $('#onlineReportScroll ul li').each(function(idnex,ele){
+                //     var $ele=$(ele);
+                //     if($ele.innerHeight()+$item.innerHeight()<1000){
+                //         $item.appendTo($ele).css({
+                //             'display':'block'
+                //         });
+                //         return false;
+                //     }
+                // })
+                $item.find('.c6_item_img img').get(0).onload=(function($item){
+
+                    return function(){
+                    loadedItemNum++;
+                    $('#onlineReportScroll ul li').each(function(index,ele){
+                        var $ele=$(ele),liLength=$('#onlineReportScroll ul li').length;
+                        if($ele.innerHeight()+$item.innerHeight()+20<700){
+                            $item.appendTo($ele).css({
+                                'display':'block'
+                            });
+                            return false;
+                        }else{
+                            if(index===liLength-1){
+                                $('<li class="c6_list als-item"></li>').append($item).appendTo($('#onlineReportScroll ul'));
+                                $item.css({
+                                    'display':'block'
+                                })
+                            }
+                        }
+                    })
+                    if(loadedItemNum===listLen){
+                        $('#onlineReportScroll').als({
+                            visible_items: 3,
+                            scrolling_items: 3,
+                            orientation: "horizontal",
+                            circular: "no",
+                            start_from: 0
+                        });
+                    }
+                }
+            })($item)
+
+            };
+            
+        })
+        },200)
+        
+        /////////////////////    
+    });
+</script>
+<script type="text/template" id="fashionListTemplate">
+    <div class="c6_item">
+        <dl class="c6_item_t">
+            <dt><a href="#"><img src="img/p48.jpg" width="48" height="48"/></a></dt>
+            <dd class="name">Marc Jacobs</dd>
+            <dd class="js">时装设计师</dd>
+        </dl>
+        <div class="c6_item_img"><img src="<%= 'testPic/testPic-1_' + (img<9?('0'+(img+1)):img+1) + '.png' %>" /></div>
+            <div class="c6_item_con">
+            <div class="said">
+                <%= $.trim(description) %>
+            </div>
+        </div>
+        <span class="icon pp"></span>
+    </div>
+</script>
+<style type="text/css">
+.imgshow_l, .imgshow_r {
+    display: block;
+}
+
+#my-als-list-1 ul {
+    float: none;
+}
+
+#my-als-list-1 {
+    height: 100%;
+}
+.view_list_con{
+    left:6px;
+}
+#my-als-list-1 .als-prev, #my-als-list-1 .als-next {
+    display: block;
+    position: absolute;
+    top: 0;
+    background: url(img/arr_y.png) no-repeat;
+    height: 256px;
+    width: 15px;
+    cursor: pointer;
+}
+
+#my-als-list-1 .als-prev {
+    background-position: 0 0;
+    left: 0;
+}
+
+#my-als-list-1 .als-prev:hover {
+    background-position: 0 -256px;
+}
+
+#my-als-list-1 .als-next {
+    background-position: -15px 0;
+    right: 0;
+}
+
+#my-als-list-1 .als-next:hover {
+    background-position: -15px -256px;
+}
+
+.schedule {
+    position: relative;
+}
+
+ul#tabs-1 {
+    left: 0px;
+    top: 0px;
+    position: absolute;
+    width: 71px;
+}
+
+ul#tabs-1 li {
+    margin-bottom: 2px;
+}
+
+ul#tabs-1 li a {
+    display: block;
+    width: 71px;
+    height: 47px;
+    cursor: pointer;
+    background-image: url(img/stag_bg.png);
+    background-repeat: no-repeat;
+    text-indent: -9999px;
+}
+
+ul#tabs-1 li a.sepFive {
+    background-position: 0px 0px;
+}
+
+ul#tabs-1 li a.sepFive.current {
+    background-position: -75px 0px;
+}
+
+ul#tabs-1 li a.sepSix {
+    background-position: 0px -49px;
+}
+
+ul#tabs-1 li a.sepSix.current {
+    background-position: -75px -49px;
+}
+
+ul#tabs-1 li a.sepSeven {
+    background-position: 0px -98px;
+}
+
+ul#tabs-1 li a.sepSeven.current {
+    background-position: -75px -98px;
+}
+
+ul#tabs-1 li a.sepEight {
+    background-position: 0px -147px;
+}
+
+ul#tabs-1 li a.sepEight.current {
+    background-position: -75px -147px;
+}
+
+ul#tabs-1 li a.sepNine {
+    background-position: 0px -196px;
+}
+
+ul#tabs-1 li a.sepNine.current {
+    background-position: -75px -196px;
+}
+
+ul#tabs-1 li a.septen {
+    background-position: 0px -245px;
+}
+
+ul#tabs-1 li a.sepTen.current {
+    background-position: -75px -245px;
+}
+
+ul#tabs-1 li a.sepEleven {
+    background-position: 0px -292px;
+}
+
+ul#tabs-1 li a.sepEleven.current {
+    background-position: -75px -292px;
+}
+
+ul#tabs-1 li a.sepTweleve {
+    background-position: 0px -341px;
+}
+
+ul#tabs-1 li a.sepTweleve.current {
+    background-position: -75px -341px;
+}
+
+#tabPanels-1 {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 217px;
+    height: 100%;
+    background: url(img/verticalNavBtn2.png) no-repeat left top;
+}
+
+#tabPanels-1 .als-container {
+    height: 364px;
+    position: absolute;
+    top: 19px;
+    bottom: 19px;
+    padding: 14px 12px;
+    background-color: #eaeaea;
+    width: 193px;
+}
+
+#tabPanels-1 .als-viewport {
+    /*position:absolute;*/
+    top: 0px;
+    /*height:364px;*/
+    /*width:193px;*/
+    /*width:100%;*/
+    /*background-color:#eaeaea;*/
+    left: 0px;
+    /*padding:14px 12px;*/
+}
+
+#tabPanels-1 .als-viewport ul {
+}
+
+#tabPanels-1 .als-viewport ul li {
+    font-family: "microsoft yahei";
+    font-size: 12px;
+    color: #000;
+    text-align: left;
+    width: 100%;
+    height: 25px;
+    line-height: 25px;
+    overflow: hidden;
+    border-bottom: 1px dotted #c0c0c0;
+}
+
+#tabPanels-1 .als-viewport ul li span {
+    cursor: pointer;
+}
+
+#tabPanels-1 .als-viewport ul li span:hover {
+    font-weight: bold;
+}
+
+#tabPanels-1 .als-prev {
+    position: absolute;
+    top: -19px;
+    left: 0px;
+    width: 217px;
+    height: 15px;
+    background: url(img/verticalNavBtn.png) no-repeat 0px -15px;
+}
+
+#tabPanels-1 .als-next {
+    position: absolute;
+    left: 0px;
+    bottom: -19px;
+    width: 217px;
+    height: 15px;
+    background: url(img/verticalNavBtn.png) no-repeat 0px -45px;
+}
+
+.video_list_con {
+    left: 4px;
+}
+
+#makeupScroll {
+    width: 940px;
+    height: 430px;
+    overflow: hidden;
+    margin: 0 auto;
+    padding-top: 40px;
+    position: relative;
+}
+
+.c8_box #makeupScroll ul {
+    padding: 0px;
+    width: 950px;
+    float: left;
+}
+
+.widthFix {
+    width: 9999px;
+}
+
+#makeupScroll .widthFix {
+    position: absolute;
+}
+#onlineReportScroll{
+    padding-top:40px;
+    width:940px;
+    margin:0 auto;
+    /*height:690px;*/
+    /*overflow:hidden;*/
+    position: relative;
+}
+#onlineReportScrollPre{
+    left:-59px;
+}
+#onlineReportScrollNext{
+    right:-59px;
+}
+#onlineReportScroll ul{
+    float:left;
+    padding:0px;
+    height:auto;
+}
+#onlineReportScroll .widthFix{
+    position:absolute;
+}
+
+#onlineReportScroll .als-viewport{
+    width:940px;
+    /*height:690px;*/
+    height:auto;
+}
+#onlineReportScroll .als-viewport li{
+    height:auto;
+}
+.c6 .c6_box{
+    height:auto;
+}
+#onlineReportScroll .said{
+    width:246px;
+}
+</style>
+</head>
+
+<body>
+<div class="top_header">
+    <div class="conwrap">
+        <div class="topnav">
+            <ul>
+                <li><a href="###" class="newyork"></a></li>
+                <li><a href="###" class="london"></a></li>
+                <li><a href="###" class="milan"></a></li>
+                <li><a href="###" class="paris"></a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="header">
+    <div class="headerwrap">
+        <a href="http://www.onlylady.com" class="logo" data-id="about"><img src="img/logo.jpg" width="350" height="65"/></a>
+
+        <div class="nav">
+            <ul>
+                <li><a href="#" class="selected">NewYork</a></li>
+                <li><a href="#">London</a></li>
+                <li><a href="#">Milan</a></li>
+                <li><a href="#">Paris</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="header_shadow"></div>
+</div>
+<div class="content">
+<div id="ny" class="main_section">
+<div class="slideshow_bg"></div>
+<div class="slideshow_box">
+    <h1>2014春夏纽约时装周</h1>
+
+    <div class="slideshow">
+        <div class="imgshow" id="imgshow">
+            <ul>
+                <li>
+                    <a title="白雯带你游纽约" href="#" target="_blank"><img src="img/imgshow.jpg" width="900"
+                                                                     height="580"/></a>
+
+                    <div class="botbar">
+                        <p class="p1">焦点直击</p>
+
+                        <p class="p2">白雯带你游纽约</p>
+
+                        <p class="p3">纽约时装周纽约时装周纽约时装周纽约纽约时装周纽约时装周纽约时装周纽约周纽约纽约时装周纽约</p>
+                    </div>
+                </li>
+                <li>
+                    <a title="白雯带你游纽约" href="#" target="_blank"><img src="img/imgshow.jpg" width="900"
+                                                                     height="580"/></a>
+
+                    <div class="botbar">
+                        <p class="p1">焦点直击</p>
+
+                        <p class="p2">白雯带你游纽约</p>
+
+                        <p class="p3">纽约时装周纽约时装周纽约时装周纽约纽约时装周纽约时装周纽约时装周纽约周纽约纽约时装周纽约</p>
+                    </div>
+                </li>
+                <li>
+                    <a title="白雯带你游纽约" href="#" target="_blank"><img src="img/imgshow.jpg" width="900"
+                                                                     height="580"/></a>
+
+                    <div class="botbar">
+                        <p class="p1">焦点直击</p>
+
+                        <p class="p2">白雯带你游纽约</p>
+
+                        <p class="p3">纽约时装周纽约时装周纽约时装周纽约纽约时装周纽约时装周纽约时装周纽约周纽约纽约时装周纽约</p>
+                    </div>
+                </li>
+                <li>
+                    <a title="白雯带你游纽约" href="#" target="_blank"><img src="img/imgshow.jpg" width="900"
+                                                                     height="580"/></a>
+
+                    <div class="botbar">
+                        <p class="p1">焦点直击</p>
+
+                        <p class="p2">白雯带你游纽约</p>
+
+                        <p class="p3">纽约时装周纽约时装周纽约时装周纽约纽约时装周纽约时装周纽约时装周纽约周纽约纽约时装周纽约</p>
+                    </div>
+                </li>
+                <li>
+                    <a title="白雯带你游纽约" href="#" target="_blank"><img src="img/imgshow.jpg" width="900"
+                                                                     height="580"/></a>
+
+                    <div class="botbar">
+                        <p class="p1">焦点直击</p>
+
+                        <p class="p2">白雯带你游纽约</p>
+
+                        <p class="p3">纽约时装周纽约时装周纽约时装周纽约纽约时装周纽约时装周纽约时装周纽约周纽约纽约时装周纽约</p>
+                    </div>
+                </li>
+                <li>
+                    <a title="白雯带你游纽约" href="#" target="_blank"><img src="img/imgshow.jpg" width="900"
+                                                                     height="580"/></a>
+
+                    <div class="botbar">
+                        <p class="p1">焦点直击</p>
+
+                        <p class="p2">白雯带你游纽约</p>
+
+                        <p class="p3">纽约时装周纽约时装周纽约时装周纽约纽约时装周纽约时装周纽约时装周纽约周纽约纽约时装周纽约</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <a href="javascript:;" class="imgshow_l" id="imgshow_l"></a>
+        <a href="javascript:;" class="imgshow_r" id="imgshow_r"></a>
+
+        <div class="scro_nav" id="scro_nav">
+            <a class="active"></a>
+            <a class=""></a>
+            <a class=""></a>
+            <a class=""></a>
+            <a class=""></a>
+            <a class=""></a>
+        </div>
+    </div>
+</div>
+<!-- c2 -->
+<div class="c2 yellow">
+    <div class="conwrap">
+        <h2><img src="img/c2h2.png" alt="时尚微博独家点评" width="860" height="75"/></h2>
+
+        <div class="c2_box">
+            <div class="c2_box_l">
+                <div class="wb_item no1">
+                    <div class="white_bg">
+                        <div class="user_info">
+                            <a href="#"><img src="img/wb_user1.png" width="37" height="37" alt="白雯"/></a>
+                            <a href="#" class="name">白雯</a>
+                        </div>
+                        <div class="txt">Michael Kors是个极简主义者，简约明朗是其设计风格，本季2013春夏系列Michael
+                            Kors在秉承了其一贯的简约的同时色彩上玩起了创意。高饱和度的浓郁色彩让T台幻化成缤纷的彩虹，大胆的色块拼接、宽腰带令人眼前一亮……
+                        </div>
+                        <div class="link"><a href="###">进入微博</a></div>
+                    </div>
+                </div>
+                <div class="wb_item no2">
+                    <div class="white_bg">
+                        <div class="user_info">
+                            <a href="#"><img src="img/wb_user2.png" width="37" height="37" alt="吉良先生"/></a>
+                            <a href="#" class="name">吉良先生</a>
+                        </div>
+                        <div class="txt">2013春夏女装秀被布置成了萦绕着咖啡及点心的清晨场景，奥尔森姐妹 (Olsen Twins) 的设计让观秀的一位名人造型师这样评价："The
+                            Row的客户也许在20年前就已经穿阿玛尼,或者唐娜·凯伦了。她会是一个极简主义者,但不是苦行者。"
+                        </div>
+                        <div class="link"><a href="###">进入微博</a></div>
+                    </div>
+                </div>
+                <div class="wb_item no3">
+                    <div class="white_bg">
+                        <div class="user_info">
+                            <a href="#"><img src="img/wb_user3.png" width="37" height="37" alt="伪少年K先生"/></a>
+                            <a href="#" class="name">伪少年K先生</a>
+                        </div>
+                        <div class="txt">kate spade New York Fall 2013 Preview.今年2月在纽约时装周第一天看过的kate spade New York
+                            2013秋季复古女郎,今天乘着黄色出租车这个纽约流动的城市地标开进了三里屯太古里北区.纽约城市导游手册变成手包,黄色出租车成了高跟鞋
+                        </div>
+                        <div class="link"><a href="###">进入微博</a></div>
+                    </div>
+                </div>
+                <div class="wb_item no4">
+                    <div class="white_bg">
+                        <div class="user_info">
+                            <a href="#"><img src="img/wb_user4.png" width="37" height="37" alt="Chrison克里森"/></a>
+                            <a href="#" class="name">Chrison克里森</a>
+                        </div>
+                        <div class="txt">
+                            Marchesa在纽约发布了2014春夏婚纱系列，轻柔浪漫得一成不变，纯粹迷人得一尘不染，款式总是经典的好，毕竟是结为连理不是搭台唱戏。既非高不可攀，也不是唾手可得，这才是完美婚纱的定义。
+                        </div>
+                        <div class="link"><a href="###">进入微博</a></div>
+                    </div>
+                </div>
+            </div>
+            <div class="c2_box_r">
+                <div class=""></div>
+                <div>
+                    <iframe width="320" height="640" frameborder="0" scrolling="no"
+                            src="http://widget.weibo.com/livestream/listlive.php?language=zh_cn&width=320&height=640&uid=1670458902&skin=8&refer=1&appkey=&pic=0&titlebar=0&border=1&publish=1&atalk=1&recomm=0&at=0&atopic=OnlyLady%E5%B8%A6%E4%BD%A0%E7%9C%8B%E6%97%B6%E8%A3%85%E5%91%A8&ptopic=OnlyLady%E5%B8%A6%E4%BD%A0%E7%9C%8B%E6%97%B6%E8%A3%85%E5%91%A8&colordiy=1&color=B5B5B5,B5B5B5,87C2E3,5093D5,FFFFFF,F5FEFF&dpc=1"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- c3 -->
+<div class="c3 peoplebg">
+    <div class="conwrap">
+        <h2><img src="img/c3h2.png" width="570" height="164"/></h2>
+
+        <div class="c3_box">
+            <div class="c3_box_t">
+                <div class="c3_box_l">
+                    <a href="#"><img src="img/jiepai.jpg" width="570" height="520"/></a>
+                </div>
+                <div class="c3_box_r">
+                    <a href="#" class="item"><img src="img/jp01.jpg" width="176" height="176"/></a>
+                    <a href="#" class="item"><img src="img/jp02.jpg" width="176" height="176"/></a>
+                    <a href="#" class="item"><img src="img/jp03.jpg" width="176" height="176"/></a>
+                    <a href="#" class="item"><img src="img/jp04.jpg" width="176" height="176"/></a>
+
+                    <div class="dp">
+                        <p class="tit">编辑点评：</p>
+
+                        <p>条纹外套搭配一条白色套环颈链，条纹外套搭配一条白色套环颈链，条纹外套搭配一条白色套环颈链，还有Canon佳能数码相机……</p>
+                    </div>
+                </div>
+            </div>
+            <div class="c3_box_b">
+                <div class="als-container view_list" id="my-als-list-1">
+                    <span class="als-prev"></span>
+
+                    <div class="als-viewport view_list_con">
+                        <ul class="als-wrapper">
+                            <li class="als-item">
+                                <a href="###" title=""><img src="img/view_img01.jpg" alt="纽约街拍" width="170"
+                                                            height="256"></a>
+
+                                <div class="bbar">这里最多可以写十二个字哟</div>
+                            </li>
+                            <li class="als-item">
+                                <a href="###" title=""><img src="img/view_img02.jpg" alt="纽约街拍" width="170"
+                                                            height="256"></a>
+
+                                <div class="bbar">这里最多可以写十二个字哟</div>
+                            </li>
+                            <li class="als-item">
+                                <a href="###" title=""><img src="img/view_img03.jpg" alt="纽约街拍" width="170"
+                                                            height="256"></a>
+
+                                <div class="bbar">这里最多可以写十二个字哟</div>
+                            </li>
+                            <li class="als-item">
+                                <a href="###" title=""><img src="img/view_img04.jpg" alt=" " width="170"
+                                                            height="256"></a>
+
+                                <div class="bbar">这里最多可以写十二个字哟</div>
+                            </li>
+                            <li class="als-item">
+                                <a href="###" title=""><img src="img/view_img05.jpg" alt=" " width="170"
+                                                            height="256"></a>
+
+                                <div class="bbar">这里最多可以写十二个字哟</div>
+                            </li>
+                            <li class="als-item">
+                                <a href="###" title=""><img src="img/view_img03.jpg" alt=" " width="170"
+                                                            height="256"></a>
+
+                                <div class="bbar">这里最多可以写十二个字哟</div>
+                            </li>
+                        </ul>
+                    </div>
+                    <span class="als-next"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- c4 -->
+<div class="c4 yellow">
+<div class="conwrap">
+<h2><img src="img/c4h2.png" width="690" height="56"/></h2>
+
+<div class="c4_box">
+<div class="c4_box_item schedule">
+<ul id="tabs-1">
+    <li>
+        <a class="sepFive">09.05</a>
+    </li>
+    <li>
+        <a class="sepSix">09.06</a>
+    </li>
+    <li>
+        <a class="sepSeven">09.07</a>
+    </li>
+    <li>
+        <a class="sepEight">09.08</a>
+    </li>
+    <li>
+        <a class="sepNine">09.09</a>
+    </li>
+    <li>
+        <a class="sepTen">09.10</a>
+    </li>
+    <li>
+        <a class="sepEleven">09.11</a>
+    </li>
+    <li>
+        <a class="sepTweleve">09.12</a>
+    </li>
+</ul>
+<div id="tabPanels-1">
+    <div class="als-container" id="my-als-list-2">
+        <a class="als-prev"></a>
+
+        <div class="als-viewport">
+            <ul class="als-wrapper">
+                <li class="als-item"><span>9:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>9:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>9:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>9:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>9:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>9:00  NICHOLAS K</span></li>
+            </ul>
+        </div>
+        <a class="als-next"></a>
+    </div>
+    <div class="als-container" id="my-als-list-3">
+        <a class="als-prev"></a>
+
+        <div class="als-viewport">
+            <ul class="als-wrapper">
+                <li class="als-item"><span>10:00  BCBG MAX AZRIA</span></li>
+                <li class="als-item"><span>10:00  BCBG MAX AZRIA</span></li>
+                <li class="als-item"><span>10:00  BCBG MAX AZRIA</span></li>
+                <li class="als-item"><span>10:00  BCBG MAX AZRIA</span></li>
+                <li class="als-item"><span>10:00  BCBG MAX AZRIA</span></li>
+                <li class="als-item"><span>10:00  BCBG MAX AZRIA</span></li>
+                <li class="als-item"><span>10:00  BCBG MAX AZRIA</span></li>
+                <li class="als-item"><span>10:00  BCBG MAX AZRIA</span></li>
+            </ul>
+        </div>
+        <a class="als-next"></a>
+    </div>
+    <div class="als-container" id="my-als-list-4">
+        <a class="als-prev"></a>
+
+        <div class="als-viewport">
+            <ul class="als-wrapper">
+                <li class="als-item"><span>11:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>11:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>11:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>11:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>11:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>11:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>11:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>11:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>11:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>11:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>11:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>11:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>11:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>11:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>9:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>9:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>9:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>9:00  NICHOLAS K</span></li>
+            </ul>
+        </div>
+        <a class="als-next"></a>
+    </div>
+    <div class="als-container" id="my-als-list-5">
+        <a class="als-prev"></a>
+
+        <div class="als-viewport">
+            <ul class="als-wrapper">
+                <li class="als-item"><span>12:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>12:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>12:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>12:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>12:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>12:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>12:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>12:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>12:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>12:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>12:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>12:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>12:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>12:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>12:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>12:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>12:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>12:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>12:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>9:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>9:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>9:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>9:00  NICHOLAS K</span></li>
+            </ul>
+        </div>
+        <a class="als-next"></a>
+    </div>
+    <div class="als-container" id="my-als-list-6">
+        <a class="als-prev"></a>
+
+        <div class="als-viewport">
+            <ul class="als-wrapper">
+                <li class="als-item"><span>13:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>13:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>13:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>13:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>13:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>13:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>13:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>13:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>13:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>13:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>13:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>13:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>13:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>13:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>13:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>13:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>13:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>13:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>13:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>13:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>13:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>13:00  NICHOLAS K</span></li>
+            </ul>
+        </div>
+        <a class="als-next"></a>
+    </div>
+    <div class="als-container" id="my-als-list-7">
+        <a class="als-prev"></a>
+
+        <div class="als-viewport">
+            <ul class="als-wrapper">
+                <li class="als-item"><span>14:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>14:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>14:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>14:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>14:00  NICHOLAS K</span></li>
+            </ul>
+        </div>
+        <a class="als-next"></a>
+    </div>
+    <div class="als-container" id="my-als-list-8">
+        <a class="als-prev"></a>
+
+        <div class="als-viewport">
+            <ul class="als-wrapper">
+                <li class="als-item"><span>15:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>15:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>15:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>15:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>15:00  NICHOLAS K</span></li>
+            </ul>
+        </div>
+        <a class="als-next"></a>
+    </div>
+    <div class="als-container" id="my-als-list-9">
+        <a class="als-prev"></a>
+
+        <div class="als-viewport">
+            <ul class="als-wrapper">
+                <li class="als-item"><span>16:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>1600  NICHOLAS K</span></li>
+                <li class="als-item"><span>16:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>16:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>16:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>16:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>1600  NICHOLAS K</span></li>
+                <li class="als-item"><span>16:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>16:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>16:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>16:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>1600  NICHOLAS K</span></li>
+                <li class="als-item"><span>16:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>16:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>16:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>16:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>1600  NICHOLAS K</span></li>
+                <li class="als-item"><span>16:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>16:00  NICHOLAS K</span></li>
+                <li class="als-item"><span>16:00  NICHOLAS K</span></li>
+            </ul>
+        </div>
+        <a class="als-next"></a>
+    </div>
+</div>
+</div>
+<div class="c4_box_item">
+    <a href="#"><img src="img/c4_img.jpg" width="289" height="430"/></a>
+
+    <div class="bbar">Michael Kors 2014春夏女装</div>
+</div>
+<div class="c4_box_item">
+    <a href="#"><img src="img/c4_img.jpg" width="289" height="430"/></a>
+
+    <div class="bbar">Michael Kors 2014春夏女装</div>
+</div>
+<div class="c4_box_item">
+    <a href="#"><img src="img/c4_img.jpg" width="289" height="430"/></a>
+
+    <div class="bbar">Michael Kors 2014春夏女装</div>
+</div>
+<div class="c4_box_item">
+    <a href="#"><img src="img/c4_img.jpg" width="289" height="430"/></a>
+
+    <div class="bbar">Michael Kors 2014春夏女装</div>
+</div>
+<div class="c4_box_item">
+    <a href="#"><img src="img/c4_img.jpg" width="289" height="430"/></a>
+
+    <div class="bbar">Michael Kors 2014春夏女装</div>
+</div>
+</div>
+</div>
+</div>
+<!-- c5 -->
+<div class="c5 black">
+    <div class="conwrap">
+        <h2><img src="img/c5h2.png"/></h2>
+
+        <div class="c5_box">
+            <img src="img/pk.jpg" width="850" height="540"/>
+
+            <div class="leftbar">
+                <a href="#" class="btn"></a>
+                <span class="num">628</span>
+            </div>
+            <div class="rightbar">
+                <a href="#" class="btn"></a>
+                <span class="num">195</span>
+            </div>
+        </div>
+        <div class="c5_bang">
+            <ul>
+                <li>
+                    <a href="#"><img src="img/c5_bang_img.jpg" width="210" height="470"/></a>
+
+                    <div class="bbar">
+                        <p class="bt">多样清凉造型</p>
+
+                        <p class="txt">巴黎的街头总和别的城市有几分不同，那些徘徊在秀场外的模特们也显得格外具有个性。不羁的表情和另类的着装，丝毫没有模特们平日里的柔美气质……<a href="#">【详细】</a>
+                        </p>
+                        <b class="rbang"></b>
+                    </div>
+                </li>
+                <li>
+                    <a href="#"><img src="img/c5_bang_img.jpg" width="210" height="470"/></a>
+
+                    <div class="bbar">
+                        <p class="bt">多样清凉造型</p>
+
+                        <p class="txt">巴黎的街头总和别的城市有几分不同，那些徘徊在秀场外的模特们也显得格外具有个性。不羁的表情和另类的着装，丝毫没有模特们平日里的柔美气质……<a href="#">【详细】</a>
+                        </p>
+                        <b class="rbang"></b>
+                    </div>
+                </li>
+                <li>
+                    <a href="#"><img src="img/c5_bang_img.jpg" width="210" height="470"/></a>
+
+                    <div class="bbar">
+                        <p class="bt">多样清凉造型</p>
+
+                        <p class="txt">巴黎的街头总和别的城市有几分不同，那些徘徊在秀场外的模特们也显得格外具有个性。不羁的表情和另类的着装，丝毫没有模特们平日里的柔美气质……<a href="#">【详细】</a>
+                        </p>
+                        <b class="bbang"></b>
+                    </div>
+                </li>
+                <li>
+                    <a href="#"><img src="img/c5_bang_img.jpg" width="210" height="470"/></a>
+
+                    <div class="bbar">
+                        <p class="bt">多样清凉造型</p>
+
+                        <p class="txt">巴黎的街头总和别的城市有几分不同，那些徘徊在秀场外的模特们也显得格外具有个性。不羁的表情和另类的着装，丝毫没有模特们平日里的柔美气质……<a href="#">【详细】</a>
+                        </p>
+                        <b class="bbang"></b>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- c6 -->
+<div class="c6 yellow">
+    <div class="conwrap">
+        <h2><img src="img/c6h2.png"/></h2>
+
+       <!--  <div class="c6_box">
+            <a href="###" id="onlineReportScrollPre" class="arrow left"></a>
+            <a href="###" id="onlineReportScrollNext" class="arrow right"></a>
+
+            <div id="onlineReportScroll">
+                <div class="widthFix">
+                    <ul>
+                        <li class="c6_list">
+                            <div class="c6_item">
+                                <dl class="c6_item_t">
+                                    <dt><a href="#"><img src="img/p48.jpg" width="48" height="48"/></a></dt>
+                                    <dd class="name">Marc Jacobs</dd>
+                                    <dd class="js">时装设计师</dd>
+                                </dl>
+                                <div class="c6_item_con">
+                                    <div class="said">newyork newyork newyork newyork new york newyork newyork. ewyork
+                                        newyork,
+                                        ewyorkk.
+                                    </div>
+                                </div>
+                                <span class="icon tt"></span>
+                            </div>
+                            <div class="c6_item">
+                                <dl class="c6_item_t">
+                                    <dt><a href="#"><img src="img/p48.jpg" width="48" height="48"/></a></dt>
+                                    <dd class="name">KATE LANPHEAR</dd>
+                                    <dd class="js">美国版《ELLE》资深时尚编辑</dd>
+                                </dl>
+                                <div class="c6_item_con">
+                                    <div class="said">newyork newyork newyork newyork newyork newyork newyork newyork
+                                        newyork
+                                        newyork newyork newyork newyork newyork newyork newyork
+                                        newyork.
+                                    </div>
+                                </div>
+                                <span class="icon face"></span>
+                            </div>
+                            <div class="c6_item">
+                                <dl class="c6_item_t">
+                                    <dt><a href="#"><img src="img/p48.jpg" width="48" height="48"/></a></dt>
+                                    <dd class="name">Anna Dello Russo</dd>
+                                    <dd class="js">Vogue日本版自由时装总监及创意顾问Vogue日本版自由时装总监及创意顾问</dd>
+                                </dl>
+                                <div class="c6_item_con">
+                                    <div class="said">newyork newyork newyork newyork new york newyork newyork newyork
+                                        new york
+                                        newyork newyork newyork new york newyork newyork newyork newyork. newyork
+                                        newyork
+                                        newyork
+                                    </div>
+                                </div>
+                                <span class="icon face"></span>
+                            </div>
+                        </li>
+                        <li class="c6_list">
+                            <div class="c6_item">
+                                <dl class="c6_item_t">
+                                    <dt><a href="#"><img src="img/p48.jpg" width="48" height="48"/></a></dt>
+                                    <dd class="name">Marc Jacobs</dd>
+                                    <dd class="js">时装设计师</dd>
+                                </dl>
+                                <div class="c6_item_img"><img src="img/270img.jpg" width="270" height="270"/></div>
+                                <div class="c6_item_con">
+                                    <div class="said">newyork newyork newyork newyork new york newyork newyork. ewyork
+                                        newyork,
+                                        ewyorkk.
+                                    </div>
+                                </div>
+                                <span class="icon pp"></span>
+                            </div>
+                        </li>
+                        <li class="c6_list">
+                            <div class="c6_item">
+                                <dl class="c6_item_t">
+                                    <dt><a href="#"><img src="img/p48.jpg" width="48" height="48"/></a></dt>
+                                    <dd class="name">Marc Jacobs</dd>
+                                    <dd class="js">时装设计师</dd>
+                                </dl>
+                                <div class="c6_item_img"><img src="img/270img2.jpg" width="270" height="160"/></div>
+                                <div class="c6_item_con">
+                                    <div class="said">
+                                        早！纽约时装周今天开始了，一季没参加这几天感觉变化好大，最高兴还有了模特中心，每个模特都可以在那里领一个礼包，里面有日常用品，连拖鞋都有（还很可爱^_^），还有维生素。看着长长的日程表，鹿不停蹄地挺过去(o^^o)
+                                    </div>
+                                </div>
+                                <span class="icon sina"></span>
+                            </div>
+                            <div class="c6_item">
+                                <dl class="c6_item_t">
+                                    <dt><a href="#"><img src="img/p48.jpg" width="48" height="48"/></a></dt>
+                                    <dd class="name">KATE LANPHEAR</dd>
+                                    <dd class="js">美国版《ELLE》资深时尚编辑</dd>
+                                </dl>
+                                <div class="c6_item_con">
+                                    <div class="said">newyork newyork newyork newyork newyork newyork newyork newyork
+                                        newyork
+                                        newyork newyork newyork newyork newyork newyork newyork
+                                        newyork.
+                                    </div>
+                                </div>
+                                <span class="icon face"></span>
+                            </div>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li class="c6_list">
+                            <div class="c6_item">
+                                <dl class="c6_item_t">
+                                    <dt><a href="#"><img src="img/p48.jpg" width="48" height="48"/></a></dt>
+                                    <dd class="name">Marc Jacobs</dd>
+                                    <dd class="js">时装设计师</dd>
+                                </dl>
+                                <div class="c6_item_con">
+                                    <div class="said">newyork newyork newyork newyork new york newyork newyork. ewyork
+                                        newyork,
+                                        ewyorkk.
+                                    </div>
+                                </div>
+                                <span class="icon tt"></span>
+                            </div>
+                            <div class="c6_item">
+                                <dl class="c6_item_t">
+                                    <dt><a href="#"><img src="img/p48.jpg" width="48" height="48"/></a></dt>
+                                    <dd class="name">KATE LANPHEAR</dd>
+                                    <dd class="js">美国版《ELLE》资深时尚编辑</dd>
+                                </dl>
+                                <div class="c6_item_con">
+                                    <div class="said">newyork newyork newyork newyork newyork newyork newyork newyork
+                                        newyork
+                                        newyork newyork newyork newyork newyork newyork newyork
+                                        newyork.
+                                    </div>
+                                </div>
+                                <span class="icon face"></span>
+                            </div>
+                            <div class="c6_item">
+                                <dl class="c6_item_t">
+                                    <dt><a href="#"><img src="img/p48.jpg" width="48" height="48"/></a></dt>
+                                    <dd class="name">Anna Dello Russo</dd>
+                                    <dd class="js">Vogue日本版自由时装总监及创意顾问Vogue日本版自由时装总监及创意顾问</dd>
+                                </dl>
+                                <div class="c6_item_con">
+                                    <div class="said">newyork newyork newyork newyork new york newyork newyork newyork
+                                        new york
+                                        newyork newyork newyork new york newyork newyork newyork newyork. newyork
+                                        newyork
+                                        newyork
+                                    </div>
+                                </div>
+                                <span class="icon face"></span>
+                            </div>
+                        </li>
+                        <li class="c6_list">
+                            <div class="c6_item">
+                                <dl class="c6_item_t">
+                                    <dt><a href="#"><img src="img/p48.jpg" width="48" height="48"/></a></dt>
+                                    <dd class="name">Marc Jacobs</dd>
+                                    <dd class="js">时装设计师</dd>
+                                </dl>
+                                <div class="c6_item_img"><img src="img/270img.jpg" width="270" height="270"/></div>
+                                <div class="c6_item_con">
+                                    <div class="said">newyork newyork newyork newyork new york newyork newyork. ewyork
+                                        newyork,
+                                        ewyorkk.
+                                    </div>
+                                </div>
+                                <span class="icon pp"></span>
+                            </div>
+                        </li>
+                        <li class="c6_list">
+                            <div class="c6_item">
+                                <dl class="c6_item_t">
+                                    <dt><a href="#"><img src="img/p48.jpg" width="48" height="48"/></a></dt>
+                                    <dd class="name">Marc Jacobs</dd>
+                                    <dd class="js">时装设计师</dd>
+                                </dl>
+                                <div class="c6_item_img"><img src="img/270img2.jpg" width="270" height="160"/></div>
+                                <div class="c6_item_con">
+                                    <div class="said">
+                                        早！纽约时装周今天开始了，一季没参加这几天感觉变化好大，最高兴还有了模特中心，每个模特都可以在那里领一个礼包，里面有日常用品，连拖鞋都有（还很可爱^_^），还有维生素。看着长长的日程表，鹿不停蹄地挺过去(o^^o)
+                                    </div>
+                                </div>
+                                <span class="icon sina"></span>
+                            </div>
+                            <div class="c6_item">
+                                <dl class="c6_item_t">
+                                    <dt><a href="#"><img src="img/p48.jpg" width="48" height="48"/></a></dt>
+                                    <dd class="name">KATE LANPHEAR</dd>
+                                    <dd class="js">美国版《ELLE》资深时尚编辑</dd>
+                                </dl>
+                                <div class="c6_item_con">
+                                    <div class="said">newyork newyork newyork newyork newyork newyork newyork newyork
+                                        newyork
+                                        newyork newyork newyork newyork newyork newyork newyork
+                                        newyork.
+                                    </div>
+                                </div>
+                                <span class="icon face"></span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div> -->
+         <div class="c6_box">
+            <div id="onlineReportScroll" class="als-container">
+                <a href="###" id="onlineReportScrollPre" class="als-prev arrow left"></a>
+                <a href="###" id="onlineReportScrollNext" class="als-next arrow right"></a>
+                <div class="als-viewport ">
+                    <ul class="als-wrapper">
+                        <li class="c6_list als-item">
+                            <div class="c6_item ">
+                                <dl class="c6_item_t">
+                                    <dt><a href="#"><img src="img/p48.jpg" width="48" height="48"/></a></dt>
+                                    <dd class="name">Marc Jacobs</dd>
+                                    <dd class="js">时装设计师</dd>
+                                </dl>
+                                <div class="c6_item_con">
+                                    <div class="said">newyork newyork newyork newyork new york newyork newyork. ewyork
+                                        newyork,
+                                        ewyorkk.
+                                    </div>
+                                </div>
+                                <span class="icon tt"></span>
+                            </div>
+                            <div class="c6_item">
+                                <dl class="c6_item_t">
+                                    <dt><a href="#"><img src="img/p48.jpg" width="48" height="48"/></a></dt>
+                                    <dd class="name">KATE LANPHEAR</dd>
+                                    <dd class="js">美国版《ELLE》资深时尚编辑</dd>
+                                </dl>
+                                <div class="c6_item_con">
+                                    <div class="said">newyork newyork newyork newyork newyork newyork newyork newyork
+                                        newyork
+                                        newyork newyork newyork newyork newyork newyork newyork
+                                        newyork.
+                                    </div>
+                                </div>
+                                <span class="icon face"></span>
+                            </div>
+                            <div class="c6_item">
+                                <dl class="c6_item_t">
+                                    <dt><a href="#"><img src="img/p48.jpg" width="48" height="48"/></a></dt>
+                                    <dd class="name">Anna Dello Russo</dd>
+                                    <dd class="js">Vogue日本版自由时装总监及创意顾问Vogue日本版自由时装总监及创意顾问</dd>
+                                </dl>
+                                <div class="c6_item_con">
+                                    <div class="said">newyork newyork newyork newyork new york newyork newyork newyork
+                                        new york
+                                        newyork newyork newyork new york newyork newyork newyork newyork. newyork
+                                        newyork
+                                        newyork
+                                    </div>
+                                </div>
+                                <span class="icon face"></span>
+                            </div>
+                        </li>
+                        <li class="c6_list als-item">
+                            <div class="c6_item">
+                                <dl class="c6_item_t">
+                                    <dt><a href="#"><img src="img/p48.jpg" width="48" height="48"/></a></dt>
+                                    <dd class="name">Marc Jacobs</dd>
+                                    <dd class="js">时装设计师</dd>
+                                </dl>
+                                <div class="c6_item_img"><img src="img/270img.jpg" width="270" height="270"/></div>
+                                <div class="c6_item_con">
+                                    <div class="said">newyork newyork newyork newyork new york newyork newyork. ewyork
+                                        newyork,
+                                        ewyorkk.
+                                    </div>
+                                </div>
+                                <span class="icon pp"></span>
+                            </div>
+                        </li>
+                        <li class="c6_list als-item">
+                            <div class="c6_item">
+                                <dl class="c6_item_t">
+                                    <dt><a href="#"><img src="img/p48.jpg" width="48" height="48"/></a></dt>
+                                    <dd class="name">Marc Jacobs</dd>
+                                    <dd class="js">时装设计师</dd>
+                                </dl>
+                                <div class="c6_item_img"><img src="img/270img2.jpg" width="270" height="160"/></div>
+                                <div class="c6_item_con">
+                                    <div class="said">
+                                        早！纽约时装周今天开始了，一季没参加这几天感觉变化好大，最高兴还有了模特中心，每个模特都可以在那里领一个礼包，里面有日常用品，连拖鞋都有（还很可爱^_^），还有维生素。看着长长的日程表，鹿不停蹄地挺过去(o^^o)
+                                    </div>
+                                </div>
+                                <span class="icon sina"></span>
+                            </div>
+                            <div class="c6_item">
+                                <dl class="c6_item_t">
+                                    <dt><a href="#"><img src="img/p48.jpg" width="48" height="48"/></a></dt>
+                                    <dd class="name">KATE LANPHEAR</dd>
+                                    <dd class="js">美国版《ELLE》资深时尚编辑</dd>
+                                </dl>
+                                <div class="c6_item_con">
+                                    <div class="said">newyork newyork newyork newyork newyork newyork newyork newyork
+                                        newyork
+                                        newyork newyork newyork newyork newyork newyork newyork
+                                        newyork.
+                                    </div>
+                                </div>
+                                <span class="icon face"></span>
+                            </div>
+                        </li>
+                        <li class="c6_list als-item">
+                            <div class="c6_item">
+                                <dl class="c6_item_t">
+                                    <dt><a href="#"><img src="img/p48.jpg" width="48" height="48"/></a></dt>
+                                    <dd class="name">Marc Jacobs</dd>
+                                    <dd class="js">时装设计师</dd>
+                                </dl>
+                                <div class="c6_item_con">
+                                    <div class="said">newyork newyork newyork newyork new york newyork newyork. ewyork
+                                        newyork,
+                                        ewyorkk.
+                                    </div>
+                                </div>
+                                <span class="icon tt"></span>
+                            </div>
+                            <div class="c6_item">
+                                <dl class="c6_item_t">
+                                    <dt><a href="#"><img src="img/p48.jpg" width="48" height="48"/></a></dt>
+                                    <dd class="name">KATE LANPHEAR</dd>
+                                    <dd class="js">美国版《ELLE》资深时尚编辑</dd>
+                                </dl>
+                                <div class="c6_item_con">
+                                    <div class="said">newyork newyork newyork newyork newyork newyork newyork newyork
+                                        newyork
+                                        newyork newyork newyork newyork newyork newyork newyork
+                                        newyork.
+                                    </div>
+                                </div>
+                                <span class="icon face"></span>
+                            </div>
+                            <div class="c6_item">
+                                <dl class="c6_item_t">
+                                    <dt><a href="#"><img src="img/p48.jpg" width="48" height="48"/></a></dt>
+                                    <dd class="name">Anna Dello Russo</dd>
+                                    <dd class="js">Vogue日本版自由时装总监及创意顾问Vogue日本版自由时装总监及创意顾问</dd>
+                                </dl>
+                                <div class="c6_item_con">
+                                    <div class="said">newyork newyork newyork newyork new york newyork newyork newyork
+                                        new york
+                                        newyork newyork newyork new york newyork newyork newyork newyork. newyork
+                                        newyork
+                                        newyork
+                                    </div>
+                                </div>
+                                <span class="icon face"></span>
+                            </div>
+                        </li>
+                        <li class="c6_list als-item">
+                            <div class="c6_item">
+                                <dl class="c6_item_t">
+                                    <dt><a href="#"><img src="img/p48.jpg" width="48" height="48"/></a></dt>
+                                    <dd class="name">Marc Jacobs</dd>
+                                    <dd class="js">时装设计师</dd>
+                                </dl>
+                                <div class="c6_item_img"><img src="img/270img.jpg" width="270" height="270"/></div>
+                                <div class="c6_item_con">
+                                    <div class="said">newyork newyork newyork newyork new york newyork newyork. ewyork
+                                        newyork,
+                                        ewyorkk.
+                                    </div>
+                                </div>
+                                <span class="icon pp"></span>
+                            </div>
+                        </li>
+                        <li class="c6_list als-item">
+                            <div class="c6_item">
+                                <dl class="c6_item_t">
+                                    <dt><a href="#"><img src="img/p48.jpg" width="48" height="48"/></a></dt>
+                                    <dd class="name">Marc Jacobs</dd>
+                                    <dd class="js">时装设计师</dd>
+                                </dl>
+                                <div class="c6_item_img"><img src="img/270img2.jpg" width="270" height="160"/></div>
+                                <div class="c6_item_con">
+                                    <div class="said">
+                                        早！纽约时装周今天开始了，一季没参加这几天感觉变化好大，最高兴还有了模特中心，每个模特都可以在那里领一个礼包，里面有日常用品，连拖鞋都有（还很可爱^_^），还有维生素。看着长长的日程表，鹿不停蹄地挺过去(o^^o)
+                                    </div>
+                                </div>
+                                <span class="icon sina"></span>
+                            </div>
+                            <div class="c6_item">
+                                <dl class="c6_item_t">
+                                    <dt><a href="#"><img src="img/p48.jpg" width="48" height="48"/></a></dt>
+                                    <dd class="name">KATE LANPHEAR</dd>
+                                    <dd class="js">美国版《ELLE》资深时尚编辑</dd>
+                                </dl>
+                                <div class="c6_item_con">
+                                    <div class="said">newyork newyork newyork newyork newyork newyork newyork newyork
+                                        newyork
+                                        newyork newyork newyork newyork newyork newyork newyork
+                                        newyork.
+                                    </div>
+                                </div>
+                                <span class="icon face"></span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- c7 -->
+<div class="c7 black">
+    <div class="conwrap">
+        <h2><img src="img/c7h2.png"/></h2>
+
+        <div class="c7_box">
+            <div class="tit">Alexander Wang 2014春夏时装秀</div>
+            <div class="video">
+                <embed src="http://player.youku.com/player.php/sid/XNTQxMzQwOTIw/partnerid/a34dcd890084fc1b/v.swf"
+                       quality="high" width="862" height="486" align="middle" allowscriptaccess="sameDomain"
+                       allowfullscreen="true" type="application/x-shockwave-flash">
+            </div>
+        </div>
+        <div class="c7_box_b">
+            <div id="my-als-list-10" class="als-container video_list">
+                <a href="javascript:;" class="als-prev video_prev prev"></a>
+
+                <div class="als-viewport video_list_con">
+                    <ul class="als-wrapper">
+                        <li class="als-item">
+                            <a href="###" title=""><img src="img/video_1.jpg" alt="纽约街拍" width="170" height="128"></a>
+
+                            <div class="bbar">Alexander Wang 2014春</div>
+                        </li>
+                        <li class="als-item">
+                            <a href="###" title=""><img src="img/video_1.jpg" alt="纽约街拍" width="170" height="128"></a>
+
+                            <div class="bbar">超模何穗纽约时装周专访</div>
+                        </li>
+                        <li class="als-item">
+                            <a href="###" title=""><img src="img/video_1.jpg" alt="纽约街拍" width="170" height="128"></a>
+
+                            <div class="bbar">超模何穗纽约时装周专访</div>
+                        </li>
+                        <li class="als-item">
+                            <a href="###" title=""><img src="img/video_1.jpg" alt="纽约街拍" width="170" height="128"></a>
+
+                            <div class="bbar">超模何穗纽约时装周专访</div>
+                        </li>
+                        <li class="als-item">
+                            <a href="###" title=""><img src="img/video_1.jpg" alt="纽约街拍" width="170" height="128"></a>
+
+                            <div class="bbar">这里最多可以写十二个字哟</div>
+                        </li>
+                        <li class="als-item">
+                            <a href="###" title=""><img src="img/video_1.jpg" alt="纽约街拍" width="170" height="128"></a>
+
+                            <div class="bbar">这里最多可以写十二个字哟</div>
+                        </li>
+                    </ul>
+                </div>
+                <a href="javascript:;" class="als-next video_next prev"></a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- c8 -->
+<div class="c8 yellow">
+    <div class="conwrap">
+        <h2><img src="img/c8h2.png"/></h2>
+
+        <div class="c8_box">
+            <a href="###" id="makeupScrollPre" class="arrow left"></a>
+            <a href="###" id="makeupScrollNext" class="arrow right"></a>
+
+            <div id="makeupScroll">
+                <div class="widthFix">
+                    <ul>
+                        <li class="c8_list_l">
+                            <div class="c8_item">
+                                <a href="#"><img src="img/315img.jpg" width="315" height="210"/></a>
+
+                                <div class="bbar">Calvin Klein Collection压轴亮相纽约时装周</div>
+                            </div>
+                            <div class="c8_item">
+                                <a href="#"><img src="img/315img.jpg" width="315" height="210"/></a>
+
+                                <div class="bbar">Calvin Klein Collection压轴亮相纽约时装周</div>
+                            </div>
+                        </li>
+                        <li class="c8_list_c">
+                            <div class="c8_item">
+                                <a href="#"><img src="img/290img.jpg"/></a>
+
+                                <div class="bbar">Calvin Klein Collection压轴亮相纽约时装周</div>
+                            </div>
+                        </li>
+                        <li class="c8_list_l">
+                            <div class="c8_item">
+                                <a href="#"><img src="img/315img.jpg" width="315" height="210"/></a>
+
+                                <div class="bbar">Calvin Klein Collection压轴亮相纽约时装周</div>
+                            </div>
+                            <div class="c8_item">
+                                <a href="#"><img src="img/315img.jpg" width="315" height="210"/></a>
+
+                                <div class="bbar">Calvin Klein Collection压轴亮相纽约时装周</div>
+                            </div>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li class="c8_list_l">
+                            <div class="c8_item">
+                                <a href="#"><img src="img/315img.jpg" width="315" height="210"/></a>
+
+                                <div class="bbar">Calvin Klein Collection压轴亮相纽约时装周</div>
+                            </div>
+                            <div class="c8_item">
+                                <a href="#"><img src="img/315img.jpg" width="315" height="210"/></a>
+
+                                <div class="bbar">Calvin Klein Collection压轴亮相纽约时装周</div>
+                            </div>
+                        </li>
+                        <li class="c8_list_c">
+                            <div class="c8_item">
+                                <a href="#"><img src="img/290img.jpg"/></a>
+
+                                <div class="bbar">Calvin Klein Collection压轴亮相纽约时装周</div>
+                            </div>
+                        </li>
+                        <li class="c8_list_l">
+                            <div class="c8_item">
+                                <a href="#"><img src="img/315img.jpg" width="315" height="210"/></a>
+
+                                <div class="bbar">Calvin Klein Collection压轴亮相纽约时装周</div>
+                            </div>
+                            <div class="c8_item">
+                                <a href="#"><img src="img/315img.jpg" width="315" height="210"/></a>
+
+                                <div class="bbar">Calvin Klein Collection压轴亮相纽约时装周</div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</body>
+</html>
